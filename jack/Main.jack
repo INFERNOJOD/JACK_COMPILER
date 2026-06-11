@@ -1,0 +1,67 @@
+class Main {
+    function void main() {
+        var Conv c;
+        var Array input;
+        var Array filter;
+        var int i;
+
+        // 5x5 test case
+        let input = Array.new(25);
+        let i = 0;
+        while (i < 25) {
+            let input[i] = 0;
+            let i = i + 1;
+        }
+        // set center pixel
+        let input[12] = 8; 
+
+        // laplacian filter setup
+        let filter = Array.new(9);
+        let filter[0] = 0;  let filter[1] = -1; let filter[2] = 0;
+        let filter[3] = -1; let filter[4] = 4;  let filter[5] = -1;
+        let filter[6] = 0;  let filter[7] = -1; let filter[8] = 0;
+
+        let c = Conv.new(5);
+        do c.initFilter(filter);
+        do c.getArrayInput(input, 5);
+        do c.conv2d();
+
+        do Output.printString("5x5 Convolution Output (3x3):");
+        do Output.println();
+        do c.printOutput();
+        do c.dispose();
+
+        do input.dispose();
+        do filter.dispose();
+
+        // 9x9 test case 
+        let input = Array.new(81);
+        let filter = Array.new(9);
+        let i = 0;
+        while (i < 81) {
+            let input[i] = 0;
+            let i = i + 1;
+        }
+        
+        let input[40] = 866; // center
+
+        let filter[0] = 0;  let filter[1] = -1; let filter[2] = 0;
+        let filter[3] = -1; let filter[4] = 4;  let filter[5] = -1;
+        let filter[6] = 0;  let filter[7] = -1; let filter[8] = 0;
+
+        let c = Conv.new(9);
+        do c.initFilter(filter);
+        do c.getArrayInput(input, 9);
+        do c.conv2d();
+
+        do Output.printString("9x9 Convolution Output (7x7):");
+        do Output.println();
+        do c.printOutput();
+        do c.dispose();
+
+        do input.dispose();
+        do filter.dispose();
+
+        return;
+    }
+}
