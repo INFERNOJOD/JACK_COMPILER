@@ -1,28 +1,328 @@
-DA2304 Assignment 3 - Jack Compiler
-Name : Krish Yadav
-Roll No : DA24B043
+# Jack Compiler
 
-This is the Jack to VM compiler for Assignment 3 . It reads the Jack files and generates the corresponding XML syntax trees and VM code .
+A complete Jack-to-VM compiler implemented in Python as part of the Nand2Tetris toolchain.
 
-Files in the src directory :
-- JackTokenizer.py : Reads the raw jack code, strips comments, and generates the T.xml token files .
-- CompilationEngine.py : The recursive descent parser. It reads the tokens and generates the final .xml tree and the .vm code .
-- SymbolTable.py : Tracks the class and subroutine scopes for all variables .
-- VMWriter.py : Helper class that writes the actual VM commands .
-- JackCompiler.py : The main runner that wires everything together .
+This project translates programs written in the Jack programming language into Hack Virtual Machine (VM) instructions. The compiler performs lexical analysis, syntax analysis, symbol management and VM code generation using a recursive-descent parsing approach.
 
-How to run the code :
-You just need Python 3 to run this . No external libraries are needed .
+---
 
-To compile everything at once, run this command :
-python3 JackCompiler.py ../jack/
+## Overview
 
-To compile just a single file, run :
-python3 JackCompiler.py ../jack/Conv.jack
+The Jack programming language is a high-level object-oriented language designed for the Nand2Tetris educational computer system.
 
-This will output the T.xml, .xml, and .vm files into the same directory . You can then load those .vm files directly into the Hack VM Emulator, or pass them into the Assignment 2 VM Translator to get the assembly code .
+The objective of this project was to build a compiler capable of translating Jack source code into executable VM instructions that can later be translated into Hack Assembly and machine code.
 
-Design Notes :
-- I set the default stride to S = 1 in the Conv class .
-- I used a Laplacian edge detection kernel for the filter ( 0,-1,0 / -1,4,-1 / 0,-1,0 ) .
-- Array writes are handled using the standard pop temp 0 / pop pointer 1 idiom so the address isn't lost .
+The compiler supports:
+
+- Class declarations
+- Constructors
+- Functions and methods
+- Variable declarations
+- Control flow statements
+  - if
+  - if-else
+  - while
+- Expressions and operators
+- Arrays
+- String constants
+- Subroutine calls
+- Object-oriented features of Jack
+
+---
+
+## Features
+
+### Lexical Analysis
+
+The tokenizer reads Jack source files and converts them into classified tokens.
+
+Supported token types:
+
+- Keywords
+- Symbols
+- Identifiers
+- Integer constants
+- String constants
+
+The tokenizer also:
+
+- Removes single-line comments
+- Removes multi-line comments
+- Ignores unnecessary whitespace
+
+---
+
+### Syntax Analysis
+
+A recursive-descent parser is used to construct the complete parse tree of the program.
+
+The parser validates:
+
+- Class structure
+- Variable declarations
+- Statements
+- Expressions
+- Function calls
+- Nested program constructs
+
+XML parse trees are generated for debugging and verification.
+
+---
+
+### Symbol Table Management
+
+The compiler maintains separate symbol tables for:
+
+- Class scope
+- Subroutine scope
+
+Information tracked:
+
+- Variable name
+- Type
+- Kind
+- Running index
+
+Supported variable categories:
+
+- static
+- field
+- argument
+- local
+
+---
+
+### VM Code Generation
+
+The compiler generates Hack VM instructions corresponding to the source program.
+
+Supported VM operations:
+
+- Arithmetic commands
+- Memory access commands
+- Function calls
+- Function declarations
+- Returns
+- Labels
+- Conditional branching
+- Loops
+
+---
+
+## Project Structure
+
+```text
+jack-compiler/
+│
+├── src/
+│   ├── JackCompiler.py
+│   ├── JackTokenizer.py
+│   ├── CompilationEngine.py
+│   ├── SymbolTable.py
+│   └── VMWriter.py
+│
+├── examples/
+│   ├── Main.jack
+│   └── Conv.jack
+│
+├── outputs/
+│   ├── Main.xml
+│   ├── Main.vm
+│   ├── Conv.xml
+│   └── Conv.vm
+│
+├── report.pdf
+└── README.md
+```
+
+---
+
+## Compiler Components
+
+### JackTokenizer.py
+
+Responsible for:
+
+- Reading Jack source code
+- Removing comments
+- Tokenizing source files
+- Generating token XML files
+
+Output:
+
+```text
+XXXT.xml
+```
+
+---
+
+### CompilationEngine.py
+
+Core recursive-descent parser.
+
+Responsible for:
+
+- Parsing tokens
+- Building syntax trees
+- Semantic processing
+- Generating VM code
+
+Outputs:
+
+```text
+XXX.xml
+XXX.vm
+```
+
+---
+
+### SymbolTable.py
+
+Maintains identifier information during compilation.
+
+Tracks:
+
+- Scope
+- Variable type
+- Variable category
+- Variable index
+
+---
+
+### VMWriter.py
+
+Provides helper methods for generating VM commands.
+
+Examples:
+
+```vm
+push constant 5
+pop local 0
+call Math.multiply 2
+return
+```
+
+---
+
+### JackCompiler.py
+
+Main driver program.
+
+Coordinates:
+
+- Tokenization
+- Parsing
+- Symbol management
+- VM generation
+
+---
+
+## Example Application
+
+To verify correctness, the compiler was tested using a custom implementation of 2D convolution written entirely in Jack.
+
+The application:
+
+- Creates input matrices
+- Creates convolution filters
+- Performs convolution operations
+- Generates output matrices
+
+A Laplacian edge-detection kernel was used during testing.
+
+This serves as a realistic end-to-end validation of the compiler pipeline.
+
+---
+
+## Requirements
+
+Python 3.8+
+
+No external libraries are required.
+
+---
+
+## Running the Compiler
+
+### Compile a Single Jack File
+
+```bash
+python3 src/JackCompiler.py examples/Conv.jack
+```
+
+### Compile an Entire Directory
+
+```bash
+python3 src/JackCompiler.py examples/
+```
+
+Generated files:
+
+```text
+T.xml   -> Token stream
+.xml    -> Parse tree
+.vm     -> VM instructions
+```
+
+---
+
+## Sample Workflow
+
+```text
+Jack Source Code
+        │
+        ▼
+Tokenization
+        │
+        ▼
+Syntax Analysis
+        │
+        ▼
+Symbol Resolution
+        │
+        ▼
+VM Code Generation
+        │
+        ▼
+Hack VM Program
+```
+
+---
+
+## Results
+
+The compiler successfully generates:
+
+- Token XML files
+- Parse-tree XML files
+- Executable Hack VM code
+
+The generated VM programs can be executed using the Nand2Tetris VM Emulator.
+
+---
+
+## Technologies Used
+
+- Python
+- Recursive Descent Parsing
+- Compiler Construction
+- Symbol Table Design
+- Stack-Based Virtual Machines
+- Nand2Tetris Toolchain
+
+---
+
+## Course Information
+
+Course: DA2304 – Computer Systems Design
+
+Assignment: Jack Compiler and 2D Convolution
+
+Institution: IIT Madras
+
+---
+
+## Author
+
+Krish Yadav  
+DA24B043
